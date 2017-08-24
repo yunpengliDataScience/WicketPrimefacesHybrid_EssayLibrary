@@ -1,0 +1,406 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.library.essay</groupId>
+	<artifactId>WicketPrimefacesHybrid_EssayLibrary</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<properties>
+		<wicket.version>6.18.0</wicket.version>
+
+		<spring.version>4.1.1.RELEASE</spring.version>
+		<hibernate.version>4.3.7.Final</hibernate.version>
+		<hibernate.search.version>4.5.1.Final</hibernate.search.version>
+		<spring.datajpa.version>1.7.1.RELEASE</spring.datajpa.version>
+
+		<c3p0.version>0.9.2.1</c3p0.version>
+		<junit.version>4.5</junit.version>
+		<javamail.version>1.4.1</javamail.version>
+		<jta.version>1.1</jta.version>
+		<dbcp.version>1.4</dbcp.version>
+		<slf4j.version>1.7.2</slf4j.version>
+
+		<jasperreport.version>5.5.1</jasperreport.version>
+		<velocity.version>1.7</velocity.version>
+		<iText.version>5.5.5</iText.version>
+		<jetty.version>6.1.4</jetty.version>
+		<javassist.version>3.12.1.GA</javassist.version>
+		<aspectj.version>1.7.0</aspectj.version>
+		<compiler-version>1.7</compiler-version>
+
+		<servlet-api-version>2.4</servlet-api-version>
+		<json.version>20090211</json.version>
+		<!-- <lucene.version>4.2.1</lucene.version> <lucene.spellchecker.version>3.6.2</lucene.spellchecker.version> -->
+		<jazzy.version>0.5.2-rtext-1.4.1-2</jazzy.version>
+		<slf4j-api.version>1.7.5</slf4j-api.version>
+		<logback-classic.version>1.0.13</logback-classic.version>
+		<jmyspell-core.version>1.0.0-beta-2</jmyspell-core.version>
+
+		<jsf.version>2.2.12</jsf.version>
+		<primefaces.version>6.1</primefaces.version>
+		<!-- default env when no profile is specified for profile during build 
+			time -->
+		<env>DEV</env>
+	</properties>
+
+	<dependencies>
+		<!-- JSF 2.2 -->
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>${jsf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>${jsf.version}</version>
+		</dependency>
+
+		<!-- EL 3.0.0 to support method parameter in EL -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<scope>provided</scope>
+			<version>3.0.0</version>
+		</dependency>
+
+		<!-- PrimeFaces -->
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>${primefaces.version}</version>
+		</dependency>
+
+		<!-- Primefaces Themes -->
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>all-themes</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+
+		<!-- Wicket -->
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-core</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-extensions</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-ioc</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-spring</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-util</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-datetime</artifactId>
+			<version>${wicket.version}</version>
+			<type>jar</type>
+		</dependency>
+
+		<!-- TinyMCE -->
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-tinymce</artifactId>
+			<version>6.18.0</version>
+		</dependency>
+
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- Object-to-Relation-Mapping (ORM) integration with Hibernate, JPA, 
+			and iBatis. (depends on spring-core, spring-beans, spring-context, spring-tx) 
+			Define this if you need ORM (org.springframework.orm.*) -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Spring AspectJ support -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring.datajpa.version}</version>
+		</dependency>
+
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		<!-- Hibernate Search -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-search-orm</artifactId>
+			<version>${hibernate.search.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.mchange</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>${c3p0.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>jta</artifactId>
+			<version>${jta.version}</version>
+		</dependency>
+
+		<dependency>
+			<artifactId>hibernate-ehcache</artifactId>
+			<groupId>org.hibernate</groupId>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		<!-- LOGGING DEPENDENCIES - LOG4J -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Jasperreports -->
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>${jasperreport.version}</version>
+		</dependency>
+
+		<!-- H2 Database -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.182</version>
+		</dependency>
+
+		<!-- iText -->
+		<dependency>
+			<groupId>com.itextpdf.tool</groupId>
+			<artifactId>xmlworker</artifactId>
+			<version>${iText.version}</version>
+		</dependency>
+
+		<!-- Apache Velocity -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity.version}</version>
+		</dependency>
+
+		<!-- Spell checker -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-suggest</artifactId> 
+			<version>${lucene.version}</version> </dependency> -->
+		<dependency>
+			<groupId>net.sf.jazzy</groupId>
+			<artifactId>jazzy</artifactId>
+			<version>${jazzy.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dts</groupId>
+			<artifactId>jmyspell-core</artifactId>
+			<version>${jmyspell-core.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>WicketPrimefacesHybrid_EssayLibrary</finalName>
+
+		<!-- Filters allow you to place variables inside your configuration files 
+			and have those variables filled in durring build time. This is very handy 
+			for setting environment specific things such as database connection information. 
+			But for filtering to work, we need to specify a filters file. It’s not enough 
+			to specify only one filter file because we need to specify different filters 
+			per environment and we’ll do that by using Maven Profiles. <filters> <filter>src/main/filters/filters-${env}.properties</filter> 
+			</filters> -->
+		<resources>
+			<!-- Set filtering to be true in resources directory. So now within any 
+				file under src/main/resources that has variables of the form ${variable.name} 
+				will have those variables replaced with the values specified in the proper 
+				filters file located under src/main/filters. -->
+			<!-- mvn clean deploy -P PROD -->
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<!-- jasper report compiler -->
+			<plugin>
+				<groupId>com.alexnederlof</groupId>
+				<artifactId>jasperreports-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>jasper</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<compiler>net.sf.jasperreports.engine.design.JRJdtCompiler</compiler>
+					<sourceDirectory>src/main/webapp/reports</sourceDirectory>
+					<outputDirectory>src/main/webapp/reports</outputDirectory>
+					<outputFileExt>.jasper</outputFileExt>
+					<xmlValidation>true</xmlValidation>
+					<verbose>false</verbose>
+					<numberOfThreads>4</numberOfThreads>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.jasperreports</groupId>
+						<artifactId>jasperreports</artifactId>
+						<version>${jasperreport.version}</version>
+
+						<exclusions>
+							<exclusion>
+								<groupId>org.apache.lucene</groupId>
+								<artifactId>lucene-analyzers-common</artifactId>
+							</exclusion>
+							<exclusion>
+								<groupId>org.apache.lucene</groupId>
+								<artifactId>lucene-queryparser</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+		</plugins>
+		
+	</build>
+
+	<!-- Profiles -->
+	<profiles>
+		<profile>
+			<id>LOCAL</id>
+			<properties>
+				<env>LOCAL</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>DEV</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<env>DEV</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>QA</id>
+			<properties>
+				<env>QA</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>PROD</id>
+			<properties>
+				<env>PROD</env>
+			</properties>
+		</profile>
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+
+		<!-- Spring repository -->
+		<repository>
+			<id>springsource-repo</id>
+			<name>SpringSource Repository</name>
+			<url>http://repo.springsource.org/release</url>
+		</repository>
+
+		<!-- Hibernate repository -->
+		<repository>
+			<id>JBoss</id>
+			<name>JBoss Repository</name>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+		</repository>
+
+		<!-- For JMySpell -->
+		<repository>
+			<id>Nuxeo</id>
+			<name>Nuxeo</name>
+			<url>http://maven-us.nuxeo.org/nexus/content/repositories/vendor-releases</url>
+		</repository>
+	</repositories>
+
+
+</project>

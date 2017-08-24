@@ -1,0 +1,52 @@
+<html>
+<body>
+	<center>
+		<br><a wicket:id="home"><span>Home</span></a>
+		<br>
+		<br><a wicket:id="essayListLink">Essays</a>
+		<br>
+		<br>
+		<br>Essay Edit Form
+		<span wicket:id="feedback"/>
+		<form wicket:id="essayForm">
+			<table style="border: 1px solid black;">
+				<tr>
+					<td>Title:</td>
+					<td colspan="2"><input type="text" wicket:id="title" /></td>
+				</tr>
+				<tr>
+					<td>Author:</td>
+					<td colspan="2"><input type="text" wicket:id="author" /></td>
+				</tr>
+				<tr>
+					<td>Content:</td>
+					<td colspan="2"><textarea class="jazzy" rows="50" cols="100" wicket:id="content" /></td>
+				</tr>
+				
+				<tr>
+					<table>
+						<tr>
+							<td>
+								<input type="submit" wicket:id="save"/>						
+							</td>
+							<td>
+								<input type="submit" wicket:id="delete"/>						
+							</td>
+							<td>
+								<button wicket:id="essayReport">Report</button>						
+							</td>
+							<td>
+								<button wicket:id="essayReport2">Report (ResourceLink)</button>						
+							</td>
+							<td>
+								<button wicket:id="iTextEssayReport">Report (IText PDF)</button>						
+							</td>
+						</tr>
+					</table>
+				</tr>
+
+			</table>
+		</form>
+	</center>
+</body>
+</html>

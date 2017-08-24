@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    	<style type="text/css"> 
+    	
+    		<!-- only for html print, not for pdf -->
+			@media print {
+				thead { display: table-header-group; }
+				tfoot { display: table-footer-group; }
+			}
+			@media screen {
+				thead { display: block; }
+				tfoot { display: block; }
+			}
+
+			h2 {
+				background-color: rgb(255,0,0);
+			}
+		</style>
+        <title>Essay Report</title>
+    </head>
+    <body>	
+		<table style="repeat-header:yes; repeat-footer:yes" width="100%">
+		   <thead>
+		   		<tr><td><h2>Title: $TITLE</h2></td></tr>
+		   		<tr><td><h2>Author: $AUTHOR</h2></td></tr>
+		   </thead>
+		   <tbody>
+		     <tr>
+		     	<td>
+		     		$CONTENT
+		     	</td>
+		     </tr>
+		   </tbody>
+		   <tfoot><tr><td>Your footer goes here</td></tr></tfoot>
+		</table>	
+	</body>
+</html>

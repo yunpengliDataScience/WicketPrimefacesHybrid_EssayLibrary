@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+ 						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.1.xsd
+						http://www.springframework.org/schema/data/jpa
+						http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd 
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+	<!-- Configurer that replaces ${...} placeholders with values from properties 
+		files -->
+	<!-- (in this case, JDBC related properties) -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:hibernate.properties</value>
+			</list>
+		</property>
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+
+
+	<!-- Wicket Application, let Spring manage the application class, see web.xml -->
+	<bean id="wicketApplication" class="com.library.essay.MainApplication" />
+	
+	<tx:annotation-driven />
+    
+    <jpa:repositories base-package="com.library.essay.persistence.repositories" />
+    
+    <!-- Scan any @Commponent and @Service from the specified directory  -->
+    <context:component-scan base-package="com.library.essay" />
+    
+    
+    <bean id="dataSource" class = "com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        
+        
+        <property name="user" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" /> 
+        
+
+        <!-- these are C3P0 properties -->
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+ 	</bean>
+ 
+    <bean id="entityManagerFactory"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="database">
+                    <value>H2</value>
+                </property>
+                <property name="showSql" value="${hibernate.show_sql}" />
+                 <property name="databasePlatform" value="${hibernate.dialect}" />
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
+			<map>
+				  
+				<entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}" />
+				
+				<entry key="hibernate.format_sql" value="true" />
+				<entry key="hibernate.use_sql_comments" value="false" />
+				<entry key="hibernate.show_sql" value="true" />
+				<entry key="hibernate.search.default.directory_provider" value="${hibernate.search.default.directory_provider}"/>
+				<entry key="hibernate.search.default.indexBase" value="${hibernate.search.default.indexBase}" />
+			</map>
+		</property>
+    </bean>
+ 
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+</beans>

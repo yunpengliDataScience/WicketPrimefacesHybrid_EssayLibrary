@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+	<display-name>Wicket Spring Data JPA Essay Library Example</display-name>
+
+	<!-- We want our Spring context to be available to our webapp if ever there 
+		is a need for one of our pages to access the Spring managed beans directly: -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+
+	
+	
+
+	<!-- OpenEntityManagerInViewFilter filter used to prevent LazyInstantiationException -->
+	<filter>
+		<filter-name>
+			OpenEntityManagerInViewFilter
+		</filter-name>
+		<filter-class>
+			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
+		</filter-class>
+		<init-param>
+			<param-name>entityManagerFactoryBeanName</param-name>
+			<param-value>entityManagerFactory</param-value>
+		</init-param>
+		<init-param>
+			<param-name>flushMode</param-name>
+			<param-value>AUTO</param-value>
+		</init-param>
+	</filter>
+
+	<!--Google service based SpellChecker-->
+    <servlet>
+        <description>A spell checking servlet that accepts JSON requests and processes them using Jazzy</description>
+        <servlet-name>google-spellchecker</servlet-name>
+        <servlet-class>com.library.essay.tinymce.spellchecker.GoogleSpellChekerServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>google-spellchecker</servlet-name>
+        <url-pattern>/servlet/google-spellchecker</url-pattern>
+    </servlet-mapping>
+
+    <!--Jazzy SpellChecker-->
+    <servlet>
+        <description>A spell checking servlet that accepts JSON requests and processes them using Jazzy</description>
+        <servlet-name>jazzy-spellchecker</servlet-name>
+        <servlet-class>com.library.essay.tinymce.spellchecker.JazzySpellCheckerServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jazzy-spellchecker</servlet-name>
+        <url-pattern>/servlet/jazzy-spellchecker</url-pattern>
+    </servlet-mapping>
+
+
+    <!--JMySpell SpellChecker-->
+    <servlet>
+        <description>A spell checking servlet that accepts JSON requests and processes them using JMySpell</description>
+        <servlet-name>jmyspell-spellchecker</servlet-name>
+        <servlet-class>com.library.essay.tinymce.spellchecker.JMySpellCheckerServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jmyspell-spellchecker</servlet-name>
+        <url-pattern>/servlet/jmyspell-spellchecker</url-pattern>
+    </servlet-mapping>
+    
+    <!-- JSF mapping -->
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+	
+	<context-param>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Development</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>sunny</param-value>
+	</context-param>
+    
+	<filter>
+		<filter-name>wicketFilter</filter-name>
+		<filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+		<init-param>
+
+
+			<!-- In order for Spring to manage our Wicket application we need to setup 
+				the Wicket filter with a Spring-aware application factory. This allows us 
+				to wire our Wicket Application class in our applicationContext.xml file, 
+				which is really handy if you have a services and configuration settings you 
+				want to inject into the Wicket Application object so the rest of your application 
+				can access them. To do this, we change the original Wicket filter like so: -->
+
+			<param-name>applicationFactoryClassName</param-name>
+			<param-value>org.apache.wicket.spring.SpringWebApplicationFactory</param-value>
+
+		</init-param>
+
+		<!-- Tell Spring where the applicationBean (wicket application) is. (see 
+			definition in applicationContext.xml). If there is only one wicket application, 
+			Spring will be smart enough to find it. -->
+		<init-param>
+			<param-name>applicationBean</param-name>
+			<param-value>wicketApplication</param-value>
+		</init-param>
+	</filter>
+
+	<!-- Regardless of which webapplication framework you choose there are just 
+		some times when a plain jane Servlet comes in really handy. If you have a 
+		need for Servlets and the Servlet must have access to the Wicket session 
+		add the following to your web.xml: -->
+	<filter>
+		<filter-name>wicket.session</filter-name>
+		<filter-class>org.apache.wicket.protocol.http.servlet.WicketSessionFilter</filter-class>
+		<init-param>
+			<param-name>filterName</param-name>
+			<param-value>wicketFilter</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>wicket.session</filter-name>
+		<url-pattern>/servlet/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Important! This filter mapping must come before Wicket's! -->
+	<filter-mapping>
+		<filter-name>OpenEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>wicketFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- for loading Spring when application starting up -->
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	
+	
+	
+
+</web-app>
+

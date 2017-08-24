@@ -1,0 +1,8 @@
+/target/
+/src/main/Doc/
+*settings
+.project
+.classpath
+*.jar
+*.log
+*.jasper
