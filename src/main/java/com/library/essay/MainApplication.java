@@ -9,62 +9,63 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.library.essay.web.EssayListPage;
+import com.library.essay.web.EssayPage;
 import com.library.essay.web.HomePage;
-
 
 public class MainApplication extends WebApplication {
 
-	private SpringComponentInjector springComponentInjector;
-	private ApplicationContext applicationContext;
+  private SpringComponentInjector springComponentInjector;
+  private ApplicationContext applicationContext;
 
-	public SpringComponentInjector getSpringComponentInjector() {
-		return springComponentInjector;
-	}
+  public SpringComponentInjector getSpringComponentInjector() {
+    return springComponentInjector;
+  }
 
-	public void setSpringComponentInjector(
-			SpringComponentInjector springComponentInjector) {
-		this.springComponentInjector = springComponentInjector;
-	}
+  public void setSpringComponentInjector(SpringComponentInjector springComponentInjector) {
+    this.springComponentInjector = springComponentInjector;
+  }
 
-	public MainApplication() {
-	}
+  public MainApplication() {}
 
-	@Override
-	public Class<? extends Page> getHomePage() {
+  @Override
+  public Class<? extends Page> getHomePage() {
 
-		return HomePage.class;
-	}
+    return HomePage.class;
+  }
 
-	@Override
-	protected void init() {
-		super.init();
+  @Override
+  protected void init() {
+    super.init();
 
-		// The wicket-spring-annot project ships with a special component
-		// instantiation listener
-		// that analyzes the components you construct and injects proxies for
-		// all the
-		// Spring-bean-annotated members it finds.
-		if (springComponentInjector == null) {
-			this.springComponentInjector = new SpringComponentInjector(this);
-		}
-		getComponentInstantiationListeners().add(springComponentInjector);
+    // The wicket-spring-annot project ships with a special component
+    // instantiation listener
+    // that analyzes the components you construct and injects proxies for
+    // all the
+    // Spring-bean-annotated members it finds.
+    if (springComponentInjector == null) {
+      this.springComponentInjector = new SpringComponentInjector(this);
+    }
+    getComponentInstantiationListeners().add(springComponentInjector);
 
-		
-		ServletContext servletContext = super.getServletContext();
-		applicationContext = WebApplicationContextUtils
-				.getWebApplicationContext(servletContext);
-		
-		//Mount bookmarkable page to a specific url.
-		this.mountPage("essayListPage", EssayListPage.class);
 
-	}
+    ServletContext servletContext = super.getServletContext();
+    applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
-	public Object getBean(String name) {
-		if (name == null)
-			return null;
+    // Mount bookmarkable page to a specific url.
+    this.mountPage("essayListPage", EssayListPage.class);
 
-		return applicationContext.getBean(name);
-	}
+    // Requests such as "http://localhost/WicketPrimefacesHybrid_EssayLibrary/essayEdit?essayId=xxx"
+    // will be mapped to EssayPage, and xxx is the parameter value.
+    this.mountPage("essayEdit", EssayPage.class);
+
+  }
+
+  public Object getBean(String name) {
+    if (name == null)
+      return null;
+
+    return applicationContext.getBean(name);
+  }
 
 }
 

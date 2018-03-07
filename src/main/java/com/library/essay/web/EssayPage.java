@@ -14,6 +14,8 @@ import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
@@ -31,267 +33,285 @@ import com.library.essay.services.EssayService;
 
 public class EssayPage extends WebPage {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(EssayPage.class);
+  private static final Logger logger = LoggerFactory.getLogger(EssayPage.class);
 
-	@SpringBean
-	private EssayService essayService;
+  @SpringBean
+  private EssayService essayService;
 
-	public EssayPage(){}
-	
-	public EssayPage(Essay essay) {
+  // bookmarkable page
+  public EssayPage() {
 
-		addHomeLink("home");
-		addEssayListLink("essayListLink");
+    IRequestParameters params = RequestCycle.get().getRequest().getRequestParameters();
 
-		add(new FeedbackPanel("feedback"));
-		addEssayForm("essayForm", essay);
-	}
+    String idString = params.getParameterValue("essayId").toString();
 
-	private void addHomeLink(String id) {
-		Link<Void> link = new Link<Void>(id) {
+    logger.info("==============================");
+    logger.info("essayId=" + idString);
+    logger.info("==============================");
 
-			private static final long serialVersionUID = 1L;
+    System.out.println("==============================");
+    System.out.println("essayId=" + idString);
+    System.out.println("==============================");
 
-			@Override
-			public void onClick() {
-				setResponsePage(HomePage.class);
-			}
-		};
+    Long essayId = Long.valueOf(idString);
+    Essay essay = new Essay();
+    essay.setId(essayId);
 
-		add(link);
-	}
+    buildPage(essay);
+  }
 
-	private void addEssayListLink(String id) {
-		Link<Void> link = new Link<Void>(id) {
+  public EssayPage(Essay essay) {
 
-			private static final long serialVersionUID = 1L;
+    buildPage(essay);
+  }
 
-			@Override
-			public void onClick() {
-				setResponsePage(EssayListPage.class);
-			}
-		};
+  private void buildPage(Essay essay) {
+    addHomeLink("home");
+    addEssayListLink("essayListLink");
 
-		add(link);
-	}
+    add(new FeedbackPanel("feedback"));
+    addEssayForm("essayForm", essay);
+  }
 
-	private void addEssayForm(String id, Essay essay) {
+  private void addHomeLink(String id) {
+    Link<Void> link = new Link<Void>(id) {
 
-		Essay currentEssay = essay;
+      private static final long serialVersionUID = 1L;
 
-		if (currentEssay == null) {
-			currentEssay = new Essay();
-		} else { // Retrieve from database
-			Long essayId = essay.getId();
+      @Override
+      public void onClick() {
+        setResponsePage(HomePage.class);
+      }
+    };
 
-			if (essayId != null && essayId > 0) {
-				currentEssay = essayService.getEssay(essayId);
-			}
-		}
+    add(link);
+  }
 
-		CompoundPropertyModel<Essay> essayCompoundPropertyModel = new CompoundPropertyModel<Essay>(
-				currentEssay);
+  private void addEssayListLink(String id) {
+    Link<Void> link = new Link<Void>(id) {
 
-		final Form<Essay> essayForm = new Form<Essay>(id,
-				essayCompoundPropertyModel) {
+      private static final long serialVersionUID = 1L;
 
-			private static final long serialVersionUID = 1L;
+      @Override
+      public void onClick() {
+        setResponsePage(EssayListPage.class);
+      }
+    };
 
-			private Essay essay = this.getModelObject();
+    add(link);
+  }
 
-			@Override
-			protected void onSubmit() {
+  private void addEssayForm(String id, Essay essay) {
 
-				logger.debug("==================================================================");
-				logger.debug("Form is submitted!!!!!!!!!!!!!!!!!!");
-				logger.debug("==================================================================");
+    Essay currentEssay = essay;
 
-				essayService.saveOrUpdate(essay);
+    if (currentEssay == null) {
+      currentEssay = new Essay();
+    } else { // Retrieve from database
+      Long essayId = essay.getId();
 
-				setResponsePage(new EssayListPage());
-			}
-		};
+      if (essayId != null && essayId > 0) {
+        currentEssay = essayService.getEssay(essayId);
+      }
+    }
 
-		addFieldsToForm(essayForm);
+    CompoundPropertyModel<Essay> essayCompoundPropertyModel =
+        new CompoundPropertyModel<Essay>(currentEssay);
 
-		addSaveButtonToForm(essayForm);
+    final Form<Essay> essayForm = new Form<Essay>(id, essayCompoundPropertyModel) {
 
-		addDeleteButtonToForm(essayForm);
+      private static final long serialVersionUID = 1L;
 
-		addReportButtonToForm(essayForm, "essayReport");
+      private Essay essay = this.getModelObject();
 
-		addReportButtonToFormUsingResourceLink(essayForm, "essayReport2");
+      @Override
+      protected void onSubmit() {
 
-		addItextReportButtonToForm(essayForm, "iTextEssayReport");
+        logger.debug("==================================================================");
+        logger.debug("Form is submitted!!!!!!!!!!!!!!!!!!");
+        logger.debug("==================================================================");
 
-		add(essayForm);
-	}
+        essayService.saveOrUpdate(essay);
 
-	/**
-	 * ReportPopUpLink customized approach
-	 * 
-	 * @param essayForm
-	 * @param id
-	 */
-	private void addReportButtonToForm(final Form<Essay> essayForm, String id) {
+        setResponsePage(new EssayListPage());
+      }
+    };
 
-		ReportPopUpLink<Essay> reportLink = new ReportPopUpLink<Essay>(id, null) {
+    addFieldsToForm(essayForm);
 
-			private static final long serialVersionUID = -1L;
+    addSaveButtonToForm(essayForm);
 
-			@Override
-			protected IResource getReportGenerationResource() {
-				Essay essay = essayForm.getModelObject();
+    addDeleteButtonToForm(essayForm);
 
-				List<Essay> essayList = new ArrayList<Essay>();
-				essayList.add(essay);
+    addReportButtonToForm(essayForm, "essayReport");
 
-				EssayReportDataSource essayReportDataSource = new EssayReportDataSource(
-						"Essay Report", essayList);
+    addReportButtonToFormUsingResourceLink(essayForm, "essayReport2");
 
-				JasperReportGenerationResource<Essay> reportGenerationResource = new JasperReportGenerationResource<Essay>(
-						"essayReport.jrxml", "application/pdf",
-						essayReportDataSource);
+    addItextReportButtonToForm(essayForm, "iTextEssayReport");
 
-				return reportGenerationResource;
-			}
-		};
+    add(essayForm);
+  }
 
-		essayForm.add(reportLink);
-	}
+  /**
+   * ReportPopUpLink customized approach
+   * 
+   * @param essayForm
+   * @param id
+   */
+  private void addReportButtonToForm(final Form<Essay> essayForm, String id) {
 
-	/**
-	 * ResourceLink approach
-	 * 
-	 * @param essayForm
-	 * @param id
-	 */
-	private void addReportButtonToFormUsingResourceLink(
-			final Form<Essay> essayForm, String id) {
+    ReportPopUpLink<Essay> reportLink = new ReportPopUpLink<Essay>(id, null) {
 
-		Essay essay = essayForm.getModelObject();
+      private static final long serialVersionUID = -1L;
 
-		List<Essay> essayList = new ArrayList<Essay>();
-		essayList.add(essay);
+      @Override
+      protected IResource getReportGenerationResource() {
+        Essay essay = essayForm.getModelObject();
 
-		EssayReportDataSource essayReportDataSource = new EssayReportDataSource(
-				"Essay Report", essayList);
+        List<Essay> essayList = new ArrayList<Essay>();
+        essayList.add(essay);
 
-		JasperReportGenerationResource<Essay> reportGenerationResource = new JasperReportGenerationResource<Essay>(
-				"essayReport.jrxml", "application/pdf", essayReportDataSource);
+        EssayReportDataSource essayReportDataSource =
+            new EssayReportDataSource("Essay Report", essayList);
 
-		ResourceLink<Void> resourceLink = new ResourceLink<Void>(id,
-				reportGenerationResource);
+        JasperReportGenerationResource<Essay> reportGenerationResource =
+            new JasperReportGenerationResource<Essay>("essayReport.jrxml", "application/pdf",
+                essayReportDataSource);
 
-		resourceLink.setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE
-				| PopupSettings.SCROLLBARS));
+        return reportGenerationResource;
+      }
+    };
 
-		essayForm.add(resourceLink);
-	}
+    essayForm.add(reportLink);
+  }
 
-	private void addItextReportButtonToForm(final Form<Essay> essayForm,
-			String id) {
+  /**
+   * ResourceLink approach
+   * 
+   * @param essayForm
+   * @param id
+   */
+  private void addReportButtonToFormUsingResourceLink(final Form<Essay> essayForm, String id) {
 
-		Essay essay = essayForm.getModelObject();
+    Essay essay = essayForm.getModelObject();
 
-		ITextPdfGenerationResource reportGenerationResource = new ITextPdfGenerationResource(
-				"richTextTemplate.vm", "application/pdf", essay);
+    List<Essay> essayList = new ArrayList<Essay>();
+    essayList.add(essay);
 
-		ResourceLink<Void> resourceLink = new ResourceLink<Void>(id,
-				reportGenerationResource);
+    EssayReportDataSource essayReportDataSource =
+        new EssayReportDataSource("Essay Report", essayList);
 
-		resourceLink.setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE
-				| PopupSettings.SCROLLBARS));
+    JasperReportGenerationResource<Essay> reportGenerationResource =
+        new JasperReportGenerationResource<Essay>("essayReport.jrxml", "application/pdf",
+            essayReportDataSource);
 
-		essayForm.add(resourceLink);
-	}
+    ResourceLink<Void> resourceLink = new ResourceLink<Void>(id, reportGenerationResource);
 
-	private void addDeleteButtonToForm(final Form<Essay> essayForm) {
-		// Delete button
-		Button deleteButton = new Button("delete", Model.of("Delete")) {
-			private static final long serialVersionUID = 1L;
+    resourceLink
+        .setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE | PopupSettings.SCROLLBARS));
 
-			@Override
-			public void onSubmit() {
+    essayForm.add(resourceLink);
+  }
 
-				logger.debug("==================================================================");
-				logger.debug("Delete Button is clicked!!!!!!!!!!!!!!!!!!");
-				logger.debug("==================================================================");
+  private void addItextReportButtonToForm(final Form<Essay> essayForm, String id) {
 
-				Essay essay = essayForm.getModelObject();
+    Essay essay = essayForm.getModelObject();
 
-				essayService.delete(essay);
+    ITextPdfGenerationResource reportGenerationResource =
+        new ITextPdfGenerationResource("richTextTemplate.vm", "application/pdf", essay);
 
-				setResponsePage(new EssayListPage());
-			}
-		};
-		deleteButton.setDefaultFormProcessing(false);
-		essayForm.add(deleteButton);
-	}
+    ResourceLink<Void> resourceLink = new ResourceLink<Void>(id, reportGenerationResource);
 
-	private void addSaveButtonToForm(final Form<Essay> essayForm) {
-		// Save button
-		Button saveButton = new Button("save", Model.of("Save")) {
-			private static final long serialVersionUID = 1L;
+    resourceLink
+        .setPopupSettings(new PopupSettings(PopupSettings.RESIZABLE | PopupSettings.SCROLLBARS));
 
-			@Override
-			public void onSubmit() {
-				logger.debug("==================================================================");
-				logger.debug("Save Button is clicked!!!!!!!!!!!!!!!!!!");
-				logger.debug("==================================================================");
+    essayForm.add(resourceLink);
+  }
 
-			}
-		};
-		saveButton.setDefaultFormProcessing(true);
-		essayForm.add(saveButton);
-	}
+  private void addDeleteButtonToForm(final Form<Essay> essayForm) {
+    // Delete button
+    Button deleteButton = new Button("delete", Model.of("Delete")) {
+      private static final long serialVersionUID = 1L;
 
-	private void addFieldsToForm(final Form<Essay> essayForm) {
-		TextField<String> titleField = new TextField<String>("title");
-		titleField.setRequired(true);
+      @Override
+      public void onSubmit() {
 
-		TextField<String> authorField = new TextField<String>("author");
-		authorField.setRequired(true);
+        logger.debug("==================================================================");
+        logger.debug("Delete Button is clicked!!!!!!!!!!!!!!!!!!");
+        logger.debug("==================================================================");
 
-		TextArea<String> contentField = new TextArea<String>("content");
-		contentField.setRequired(true);
+        Essay essay = essayForm.getModelObject();
 
-		addRichTextEditor(contentField);
+        essayService.delete(essay);
 
-		essayForm.add(titleField);
-		essayForm.add(authorField);
-		essayForm.add(contentField);
-	}
+        setResponsePage(new EssayListPage());
+      }
+    };
+    deleteButton.setDefaultFormProcessing(false);
+    essayForm.add(deleteButton);
+  }
 
-	private void addRichTextEditor(TextArea<String> contentField) {
-		TinyMCESettings settings = new TinyMCESettings(
-				TinyMCESettings.Theme.advanced);
+  private void addSaveButtonToForm(final Form<Essay> essayForm) {
+    // Save button
+    Button saveButton = new Button("save", Model.of("Save")) {
+      private static final long serialVersionUID = 1L;
 
-		// first toolbar
-		settings.add(wicket.contrib.tinymce.settings.Button.newdocument,
-				TinyMCESettings.Toolbar.first, TinyMCESettings.Position.before);
-		settings.add(wicket.contrib.tinymce.settings.Button.separator,
-				TinyMCESettings.Toolbar.first, TinyMCESettings.Position.before);
-		settings.add(wicket.contrib.tinymce.settings.Button.fontselect,
-				TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
+      @Override
+      public void onSubmit() {
+        logger.debug("==================================================================");
+        logger.debug("Save Button is clicked!!!!!!!!!!!!!!!!!!");
+        logger.debug("==================================================================");
 
-		// other settings
-		settings.setToolbarAlign(TinyMCESettings.Align.left);
-		settings.setToolbarLocation(TinyMCESettings.Location.top);
-		settings.setStatusbarLocation(TinyMCESettings.Location.bottom);
-		settings.setResizing(true);
+      }
+    };
+    saveButton.setDefaultFormProcessing(true);
+    essayForm.add(saveButton);
+  }
 
-		settings.addCustomSetting("theme_advanced_buttons3_add : \"spellchecker\"");
-		settings.addCustomSetting("selector: \"textarea.jazzy\"");
-		settings.addCustomSetting("plugins: \"spellchecker\"");
-		settings.addCustomSetting("spellchecker_languages : \"+English=en-us\"");
+  private void addFieldsToForm(final Form<Essay> essayForm) {
+    TextField<String> titleField = new TextField<String>("title");
+    titleField.setRequired(true);
 
-		String contextPath = getRequestCycle().getRequest().getContextPath();
+    TextField<String> authorField = new TextField<String>("author");
+    authorField.setRequired(true);
 
-		settings.addCustomSetting("spellchecker_rpc_url : \"" + contextPath
-				+ "/servlet/jazzy-spellchecker\"");
-		contentField.add(new TinyMceBehavior(settings));
-	}
+    TextArea<String> contentField = new TextArea<String>("content");
+    contentField.setRequired(true);
+
+    addRichTextEditor(contentField);
+
+    essayForm.add(titleField);
+    essayForm.add(authorField);
+    essayForm.add(contentField);
+  }
+
+  private void addRichTextEditor(TextArea<String> contentField) {
+    TinyMCESettings settings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
+
+    // first toolbar
+    settings.add(wicket.contrib.tinymce.settings.Button.newdocument, TinyMCESettings.Toolbar.first,
+        TinyMCESettings.Position.before);
+    settings.add(wicket.contrib.tinymce.settings.Button.separator, TinyMCESettings.Toolbar.first,
+        TinyMCESettings.Position.before);
+    settings.add(wicket.contrib.tinymce.settings.Button.fontselect, TinyMCESettings.Toolbar.first,
+        TinyMCESettings.Position.after);
+
+    // other settings
+    settings.setToolbarAlign(TinyMCESettings.Align.left);
+    settings.setToolbarLocation(TinyMCESettings.Location.top);
+    settings.setStatusbarLocation(TinyMCESettings.Location.bottom);
+    settings.setResizing(true);
+
+    settings.addCustomSetting("theme_advanced_buttons3_add : \"spellchecker\"");
+    settings.addCustomSetting("selector: \"textarea.jazzy\"");
+    settings.addCustomSetting("plugins: \"spellchecker\"");
+    settings.addCustomSetting("spellchecker_languages : \"+English=en-us\"");
+
+    String contextPath = getRequestCycle().getRequest().getContextPath();
+
+    settings.addCustomSetting(
+        "spellchecker_rpc_url : \"" + contextPath + "/servlet/jazzy-spellchecker\"");
+    contentField.add(new TinyMceBehavior(settings));
+  }
 
 }

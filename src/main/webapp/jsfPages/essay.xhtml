@@ -35,6 +35,10 @@
 						<f:param name="essayId" value="#{essay.id}" />
 					</h:commandLink>
 				</p:column>
+				
+				<p:column headerText="Essay ID (Navigate to Wicket)">
+					<h:outputLink value="#{request.contextPath}/essayEdit?essayId=#{essay.id}">#{essay.id}</h:outputLink>
+				</p:column>
 
 				<p:column headerText="Title">
 					<h:outputText value="#{essay.title}" />   				
