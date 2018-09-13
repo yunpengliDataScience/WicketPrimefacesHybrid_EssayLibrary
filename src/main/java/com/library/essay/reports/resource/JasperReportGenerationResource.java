@@ -33,6 +33,7 @@ import com.library.essay.reports.dataSource.JasperReportAbstractDataSource;
 
 /**
  * This is used with ReportLink to generate reports. It implements IResource.
+ * @param <T> 
  */
 public class JasperReportGenerationResource<T> extends AbstractResource {
 

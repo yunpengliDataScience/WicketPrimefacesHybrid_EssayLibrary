@@ -6,16 +6,14 @@ import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.library.essay.persistence.entities.Essay;
 import com.library.essay.services.EssayService;
+import com.library.essay.utils.MyUtil;
 
 //DI via JSF managed bean
 @ManagedBean(name = "essayBean")
@@ -37,6 +35,8 @@ public class EssayBean implements Serializable {
 
 	public EssayBean() {
 		essay = new Essay();
+
+		MyUtil.exploreHttpServeletRequest(logger);
 	}
 
 	public List<Essay> getEssays() {
@@ -54,7 +54,7 @@ public class EssayBean implements Serializable {
 
 		return "essay";
 	}
-	
+
 	public String showEssay() {
 
 		FacesContext fc = FacesContext.getCurrentInstance();
@@ -71,8 +71,7 @@ public class EssayBean implements Serializable {
 	private String getEssayId(FacesContext fc) {
 
 		// Use FacesContext to get the parameters passed from <f:param>
-		Map<String, String> params = fc.getExternalContext()
-				.getRequestParameterMap();
+		Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
 
 		return params.get("essayId");
 

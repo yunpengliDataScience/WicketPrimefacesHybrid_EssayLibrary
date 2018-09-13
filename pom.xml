@@ -27,7 +27,7 @@
 		<jetty.version>6.1.4</jetty.version>
 		<javassist.version>3.12.1.GA</javassist.version>
 		<aspectj.version>1.7.0</aspectj.version>
-		<compiler-version>1.7</compiler-version>
+		<compiler-version>1.8</compiler-version>
 
 		<servlet-api-version>2.4</servlet-api-version>
 		<json.version>20090211</json.version>
@@ -204,6 +204,12 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -335,6 +341,18 @@
 						</exclusions>
 					</dependency>
 				</dependencies>
+			</plugin>
+			
+			<plugin>
+				
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${compiler-version}</source>
+					<target>${compiler-version}</target>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+				<inherited>true</inherited>
 			</plugin>
 
 		</plugins>

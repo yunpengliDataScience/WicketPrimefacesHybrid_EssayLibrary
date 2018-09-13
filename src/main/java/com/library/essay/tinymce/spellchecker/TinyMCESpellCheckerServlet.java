@@ -206,6 +206,10 @@ public abstract class TinyMCESpellCheckerServlet extends HttpServlet {
      *    }
      * }
      * </pre>
+     * @param request 
+     * @param response 
+     * @throws ServletException 
+     * @throws IOException 
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

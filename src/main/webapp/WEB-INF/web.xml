@@ -31,6 +31,11 @@
 			<param-value>AUTO</param-value>
 		</init-param>
 	</filter>
+	
+	<filter>
+		<filter-name>myContextFilter</filter-name>
+		<filter-class>com.library.essay.filters.MyContextFilter</filter-class>
+	</filter>
 
 	<!--Google service based SpellChecker-->
     <servlet>
@@ -138,6 +143,11 @@
 	<!-- Important! This filter mapping must come before Wicket's! -->
 	<filter-mapping>
 		<filter-name>OpenEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>myContextFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 

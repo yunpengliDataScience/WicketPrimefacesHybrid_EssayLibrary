@@ -18,9 +18,12 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.library.essay.persistence.entities.Essay;
 import com.library.essay.services.EssayService;
+import com.library.essay.utils.MyUtil;
 import com.library.essay.web.components.EssayIdLinkPanel;
 import com.library.essay.wicket.models.ReloadingEssayModel;
 
@@ -29,11 +32,15 @@ public class EssayListPage extends WebPage {
 	@SpringBean
 	private EssayService essayService;
 
+	private final Logger logger = LoggerFactory.getLogger(EssayListPage.class);
+
 	public EssayListPage() {
 
 		addHomeLink("home");
 		addEssayListDataTable("essayListDataTable");
 		addCreateEssayLink("createNew");
+
+		MyUtil.exploreHttpServeletRequest(logger);
 	}
 
 	private void addCreateEssayLink(String id) {
@@ -87,8 +94,7 @@ public class EssayListPage extends WebPage {
 					}
 				}
 
-				return essayService.getEssays((int) first / (int) count,
-						(int) count, sortProperty, isAsc).iterator();
+				return essayService.getEssays((int) first / (int) count, (int) count, sortProperty, isAsc).iterator();
 			}
 
 			public long size() {
@@ -106,25 +112,22 @@ public class EssayListPage extends WebPage {
 		List<IColumn<Essay, String>> columns = new ArrayList<IColumn<Essay, String>>();
 
 		// Add link to the id
-		columns.add(new AbstractColumn<Essay, String>(new Model<String>("ID"),
-				"id") {
+		columns.add(new AbstractColumn<Essay, String>(new Model<String>("ID"), "id") {
 
 			private static final long serialVersionUID = 1L;
 
-			public void populateItem(Item<ICellPopulator<Essay>> cellItem,
-					String componentId, IModel<Essay> rowModel) {
+			@Override
+			public void populateItem(Item<ICellPopulator<Essay>> cellItem, String componentId, IModel<Essay> rowModel) {
 				cellItem.add(new EssayIdLinkPanel(componentId, rowModel));
 
 			}
+
 		});
 
-		columns.add(new PropertyColumn<Essay, String>(
-				new Model<String>("Title"), "title", "title"));
-		columns.add(new PropertyColumn<Essay, String>(new Model<String>(
-				"Author"), "author", "author"));
+		columns.add(new PropertyColumn<Essay, String>(new Model<String>("Title"), "title", "title"));
+		columns.add(new PropertyColumn<Essay, String>(new Model<String>("Author"), "author", "author"));
 
-		DefaultDataTable<Essay, String> dt = new DefaultDataTable<Essay, String>(
-				id, columns, employeeDataProvider, 10);
+		DefaultDataTable<Essay, String> dt = new DefaultDataTable<Essay, String>(id, columns, employeeDataProvider, 10);
 		add(dt);
 	}
 }
