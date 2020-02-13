@@ -1,8 +1,11 @@
 package com.library.essay.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -21,15 +24,15 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wicket.contrib.tinymce.TinyMceBehavior;
-import wicket.contrib.tinymce.settings.TinyMCESettings;
-
 import com.library.essay.persistence.entities.Essay;
 import com.library.essay.reports.dataSource.EssayReportDataSource;
 import com.library.essay.reports.resource.ITextPdfGenerationResource;
 import com.library.essay.reports.resource.JasperReportGenerationResource;
 import com.library.essay.reports.wicket.component.ReportPopUpLink;
 import com.library.essay.services.EssayService;
+
+import wicket.contrib.tinymce.TinyMceBehavior;
+import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 public class EssayPage extends WebPage {
 
@@ -272,7 +275,30 @@ public class EssayPage extends WebPage {
     TextField<String> titleField = new TextField<String>("title");
     titleField.setRequired(true);
 
-    TextField<String> authorField = new TextField<String>("author");
+    AutoCompleteTextField authorField = new AutoCompleteTextField("author") {
+
+      @Override
+      protected Iterator getChoices(String input) {
+        return getMatchedNames(input);
+      }
+
+      private Iterator getMatchedNames(String input) {
+        List<String> authors =
+            Arrays.asList(new String[] {"Cliff Lee", "Andrew Yang", "Andrew Ye"});
+
+        List<String> matches = new ArrayList<String>();
+
+        for (String author : authors) {
+          if (author.startsWith(input)) {
+            matches.add(author);
+          }
+        }
+
+        return matches.iterator();
+      }
+    };
+
+    // TextField<String> authorField = new TextField<String>("author");
     authorField.setRequired(true);
 
     TextArea<String> contentField = new TextArea<String>("content");
